@@ -9,7 +9,8 @@ python 3.12.4
 
 ## Bibliotecas
 
-pip install kinvy
+pip install kivy
+
 pip install requests
 
 
