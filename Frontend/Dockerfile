@@ -16,7 +16,9 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # the application crashes without emitting any logs due to buffering.
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /Frontend/view/home
+# ADD requirements.txt Frontend
+
+WORKDIR /view/home
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
@@ -48,4 +50,4 @@ COPY . .
 EXPOSE 8000
 
 # Run the application.
-CMD uvicorn 'home:app' --host=0.0.0.0 --port=8000
+CMD uvicorn -m 'home:app' --host=0.0.0.0 --port=8000
