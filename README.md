@@ -23,6 +23,6 @@ A princípio as coisas a serem implementadas nessa branch são:
 - [x] Dockerização da aplicação;
 - [ ] Testes com Heroku e AWS Lambda para escolha da plataforma de Deploy da aplicação;
 - [ ] Implementação do banco PostgreSQL na nuvem e disponível online (via NeonTech);
-- [ ] ~~ Implementação do banco REDIS na nuvem e disponível online (via Upstash Redis);~~
+- [ ] ~~Implementação do banco REDIS na nuvem e disponível online (via Upstash Redis);~~
 - [ ] Conexão com os bancos via programa em Python;
 - [ ] Implementação de um CRUD inicial com Python (via Django).
