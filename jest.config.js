@@ -16,6 +16,7 @@ const customJestConfig = {
   transformIgnorePatterns: [
     '/node_modules/(?!(@heroicons/react)/)',
   ],
+  testMatch: ['**/*.test.ts', '**/*.test.tsx'],
 }
 
 module.exports = createJestConfig(customJestConfig)

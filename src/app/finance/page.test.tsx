@@ -4,39 +4,39 @@ import Finance from './page'
 describe('Finance', () => {
   it('renders the heading', () => {
     render(<Finance />)
-    const heading = screen.getByRole('heading', { name: /Personal Finance/i })
+    const heading = screen.getByRole('heading', { name: /Finanças Pessoais/i })
     expect(heading).toBeInTheDocument()
   })
 
   it('displays initial transactions', () => {
     render(<Finance />)
-    expect(screen.getByText(/Salary/i)).toBeInTheDocument()
-    expect(screen.getByText(/Rent/i)).toBeInTheDocument()
+    expect(screen.getByText(/Salário/i)).toBeInTheDocument()
+    expect(screen.getByText(/Aluguel/i)).toBeInTheDocument()
     expect(screen.getByText(/Freelance/i)).toBeInTheDocument()
-    expect(screen.getByText(/Groceries/i)).toBeInTheDocument()
+    expect(screen.getByText(/Mercado/i)).toBeInTheDocument()
   })
 
   it('allows adding a new transaction', () => {
     render(<Finance />)
     
-    fireEvent.change(screen.getByLabelText(/Type/i), { target: { value: 'income' } })
-    fireEvent.change(screen.getByLabelText(/Description/i), { target: { value: 'New Income' } })
-    fireEvent.change(screen.getByLabelText(/Amount/i), { target: { value: '1000' } })
+    fireEvent.change(screen.getByLabelText(/Tipo/i), { target: { value: 'income' } })
+    fireEvent.change(screen.getByLabelText(/Descrição/i), { target: { value: 'New Income' } })
+    fireEvent.change(screen.getByLabelText(/Valor/i), { target: { value: '1000' } })
     
-    fireEvent.click(screen.getByRole('button', { name: /Add Transaction/i }))
+    fireEvent.click(screen.getByRole('button', { name: /Adicionar Transação/i }))
 
-    expect(screen.getByText(/New Income/i)).toBeInTheDocument()
+    expect(screen.getByText(/Adicionar Transação/i)).toBeInTheDocument()
   })
 
   it('calculates and displays the correct balance', () => {
     render(<Finance />)
-    const balanceElement = screen.getByText(/Balance:/i).nextSibling
+    const balanceElement = screen.getByText(/Saldo:/i).nextSibling
     expect(balanceElement).toHaveTextContent('R$ 4200.00')
   })
 
   it('has a link back to the home page', () => {
     render(<Finance />)
-    const link = screen.getByRole('link', { name: /Back to Home/i })
+    const link = screen.getByRole('link', { name: /Voltar para Página Inicial/i })
     expect(link).toBeInTheDocument()
     expect(link).toHaveAttribute('href', '/')
   })

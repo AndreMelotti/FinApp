@@ -63,19 +63,21 @@ export default function Finance() {
             <h2 className="text-2xl font-semibold mb-4">Adicionar Transações</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block mb-1 font-semibold">Tipo</label>
-                <select
-                  name="type"
-                  value={newTransaction.type}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded-lg"
-                >
-                  <option value="income">Entrada</option>
-                  <option value="expense">Despesa</option>
+                <label htmlFor="transaction-type" className="block mb-1 font-semibold">Tipo</label>
+                  <select
+                    id="transaction-type"
+                    name="type"
+                    value={newTransaction.type}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border rounded-lg"
+                  >
+                    <option value="income">Entrada</option>
+                    <option value="expense">Despesa</option>
+                  
                 </select>
               </div>
               <div>
-                <label className="block mb-1 font-semibold">Descrição</label>
+                <label htmlFor="transaction-type" className="block mb-1 font-semibold">Descrição</label>
                 <input
                   type="text"
                   name="description"
@@ -86,7 +88,7 @@ export default function Finance() {
                 />
               </div>
               <div>
-                <label className="block mb-1 font-semibold">Valor</label>
+                <label htmlFor="transaction-type" className="block mb-1 font-semibold">Valor</label>
                 <input
                   type="number"
                   name="amount"

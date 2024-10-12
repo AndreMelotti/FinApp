@@ -12,13 +12,15 @@ import { useEffect, useState } from 'react'
 export default function Home() {
   // In a real application, you would fetch this data from an API
 
-  const [dollar, setDollar]: any = useState([])
-  const [btc, setBtc]: any = useState([])
-  const [euro, setEuro]: any = useState([])
+  const [dollar, setDollar]: any = useState<string>("")
+  const [btc, setBtc]: any = useState<string>("")
+  const [euro, setEuro]: any = useState<string>("")
 
   useEffect(()=>{
     fetch("https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL,BTC-BRL")
-    .then((response)=> {return response.json()})
+    .then((response)=> {if (!response.ok) {
+      throw new Error('Network response was not ok');
+    } return response.json()})
     .then((json)=>setDollar(json.USDBRL.high))
     // .then((dollar)=>console.log(dollar))
     .catch((err)=> console.log(err))
@@ -29,14 +31,14 @@ export default function Home() {
     .then((response)=> {return response.json()})
     .then((data)=>setEuro(data.EURBRL.high))
     .catch((err)=> console.log(err))
-  })
+  },[])
 
   useEffect(()=>{
     fetch("https://economia.awesomeapi.com.br/last/BTC-BRL")
     .then((response)=> {return response.json()})
     .then((data)=>setBtc(data.BTCBRL.high))
     .catch((err)=> console.log(err))
-  })
+  },[])
   
   const currencies = [
     { name: 'Dólar EUA (USD)', value: dollar },
