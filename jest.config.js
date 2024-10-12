@@ -1,29 +1,21 @@
-// jest.config.js
-module.exports = {
-  // Indica o ambiente de teste do Jest
-  testEnvironment: 'jest-environment-jsdom',
-  // Arquivos que devem ser carregados antes dos testes
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
-  // Mapeamento para tratar arquivos CSS e outros assets não JavaScript
-  moduleNameMapper: {
-    '^.+\\.css$': 'identity-obj-proxy',
-  },
-  // Transformação de arquivos TypeScript com ts-jest
-  transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
-  },
-  testPathIgnorePatterns: ['/node_modules/', '/.next/'], // Ignorar estas pastas
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-};
+const nextJest = require('next/jest')
 
-// jest.config.js
-module.exports = {
-  preset: 'ts-jest', // Usar ts-jest como o compilador
+const createJestConfig = nextJest({
+  dir: './',
+})
+
+const customJestConfig = {
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jest-environment-jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
-    '^.+\\.css$': 'identity-obj-proxy',
+    '^@/components/(.*)$': '<rootDir>/components/$1',
+    '\\.(css|less|sass|scss)$': '<rootDir>/__mocks__/styleMock.js',
+    '\\.(gif|ttf|eot|svg)$': '<rootDir>/__mocks__/fileMock.js',
   },
-  testPathIgnorePatterns: ['/node_modules/', '/.next/'],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-};
+  moduleDirectories: ['node_modules', '<rootDir>/'],
+  transformIgnorePatterns: [
+    '/node_modules/(?!(@heroicons/react)/)',
+  ],
+}
+
+module.exports = createJestConfig(customJestConfig)

@@ -49,7 +49,7 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-8 text-center text-primary">Monetrix</h1>
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Cotações em Reais (R$)</h2>
+          {/* <h2 className="text-2xl font-semibold mb-4">Cotações em Reais (R$)</h2> */}
           <ul className="space-y-4">
             {currencies.map((currency) => (
               <li key={currency.name} className="flex justify-between items-center border-b pb-2">
