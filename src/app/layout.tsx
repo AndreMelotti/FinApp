@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from 'next/font/google'
 import localFont from "next/font/local";
 import "./globals.css";
+import { TopBar } from "@/components/top-bar"
+import { ThemeProvider } from "@/components/theme-provider"
 
 const plusJakartaSans = Plus_Jakarta_Sans({ subsets: ['latin'] })
 
@@ -31,7 +33,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={plusJakartaSans.className}>{children}</body>
+      <body className={plusJakartaSans.className}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <TopBar />
+          <main>{children}</main>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
+
