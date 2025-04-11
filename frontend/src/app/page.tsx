@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { DashboardCard } from "@/components/dashboard-card"
 import { QuickActionButton } from "@/components/quick-action-button"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
-import React from "react"
 
 const data = [
   { name: "Jan", income: 4000, expenses: 2400 },

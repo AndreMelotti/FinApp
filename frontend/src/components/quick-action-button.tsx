@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import type { ReactNode } from "react"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 interface QuickActionButtonProps {
   href: string
@@ -10,11 +10,11 @@ interface QuickActionButtonProps {
 
 export function QuickActionButton({ href, icon, label }: QuickActionButtonProps) {
   return (
-    <Link href={href}>
-      <Button variant="outline" className="w-full">
+    <Button variant="outline" className="w-full justify-start" asChild>
+      <Link href={href}>
         {icon}
         {label}
-      </Button>
-    </Link>
+      </Link>
+    </Button>
   )
 }
