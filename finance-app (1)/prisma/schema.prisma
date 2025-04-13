@@ -1,0 +1,224 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id              Int                   @id @default(autoincrement())
+  nome            String                @db.VarChar(100)
+  email           String                @unique @db.VarChar(100)
+  telefone        String?               @db.VarChar(20)
+  senhaHash       String                @map("senha_hash") @db.VarChar(255)
+  dataCriacao     DateTime              @default(now()) @map("data_criacao")
+  dataAtualizacao DateTime              @default(now()) @map("data_atualizacao")
+  receitas        Receita[]
+  despesas        Despesa[]
+  investimentos   Investimento[]
+  dividas         Divida[]
+  metasFinanceiras MetaFinanceira[]
+  membrosGrupo    MembroGrupo[]
+  relatorios      Relatorio[]
+
+  @@map("usuarios")
+  @@schema("monetrix")
+}
+
+model CategoriaReceita {
+  id        Int       @id @default(autoincrement())
+  nome      String    @db.VarChar(50)
+  descricao String?
+  icone     String?   @db.VarChar(50)
+  receitas  Receita[]
+
+  @@map("categorias_receitas")
+  @@schema("monetrix")
+}
+
+model CategoriaDespesa {
+  id        Int       @id @default(autoincrement())
+  nome      String    @db.VarChar(50)
+  descricao String?
+  icone     String?   @db.VarChar(50)
+  despesas  Despesa[]
+
+  @@map("categorias_despesas")
+  @@schema("monetrix")
+}
+
+model Receita {
+  id           Int              @id @default(autoincrement())
+  usuarioId    Int              @map("usuario_id")
+  categoriaId  Int?             @map("categoria_id")
+  valor        Decimal          @db.Decimal(15, 2)
+  data         DateTime         @db.Date
+  descricao    String?
+  dataCriacao  DateTime         @default(now()) @map("data_criacao")
+  usuario      Usuario          @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  categoria    CategoriaReceita? @relation(fields: [categoriaId], references: [id])
+
+  @@map("receitas")
+  @@schema("monetrix")
+}
+
+model Despesa {
+  id           Int              @id @default(autoincrement())
+  usuarioId    Int              @map("usuario_id")
+  categoriaId  Int?             @map("categoria_id")
+  valor        Decimal          @db.Decimal(15, 2)
+  data         DateTime         @db.Date
+  descricao    String?
+  dataCriacao  DateTime         @default(now()) @map("data_criacao")
+  usuario      Usuario          @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  categoria    CategoriaDespesa? @relation(fields: [categoriaId], references: [id])
+
+  @@map("despesas")
+  @@schema("monetrix")
+}
+
+model TipoInvestimento {
+  id           Int            @id @default(autoincrement())
+  nome         String         @db.VarChar(50)
+  descricao    String?
+  investimentos Investimento[]
+
+  @@map("tipos_investimentos")
+  @@schema("monetrix")
+}
+
+model Investimento {
+  id              Int              @id @default(autoincrement())
+  usuarioId       Int              @map("usuario_id")
+  tipoId          Int?             @map("tipo_id")
+  nome            String           @db.VarChar(100)
+  valor           Decimal          @db.Decimal(15, 2)
+  taxaRetorno     Decimal?         @map("taxa_retorno") @db.Decimal(6, 2)
+  dataInicio      DateTime         @map("data_inicio") @db.Date
+  dataVencimento  DateTime?        @map("data_vencimento") @db.Date
+  descricao       String?
+  dataCriacao     DateTime         @default(now()) @map("data_criacao")
+  dataAtualizacao DateTime         @default(now()) @map("data_atualizacao")
+  usuario         Usuario          @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  tipo            TipoInvestimento? @relation(fields: [tipoId], references: [id])
+
+  @@map("investimentos")
+  @@schema("monetrix")
+}
+
+model Divida {
+  id              Int       @id @default(autoincrement())
+  usuarioId       Int       @map("usuario_id")
+  nome            String    @db.VarChar(100)
+  valorTotal      Decimal   @map("valor_total") @db.Decimal(15, 2)
+  valorPago       Decimal   @default(0) @map("valor_pago") @db.Decimal(15, 2)
+  taxaJuros       Decimal?  @map("taxa_juros") @db.Decimal(6, 2)
+  dataVencimento  DateTime? @map("data_vencimento") @db.Date
+  parcelas        Int?
+  valorParcela    Decimal?  @map("valor_parcela") @db.Decimal(15, 2)
+  descricao       String?
+  dataCriacao     DateTime  @default(now()) @map("data_criacao")
+  dataAtualizacao DateTime  @default(now()) @map("data_atualizacao")
+  usuario         Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("dividas")
+  @@schema("monetrix")
+}
+
+model MetaFinanceira {
+  id              Int       @id @default(autoincrement())
+  usuarioId       Int       @map("usuario_id")
+  nome            String    @db.VarChar(100)
+  descricao       String?
+  valorAlvo       Decimal   @map("valor_alvo") @db.Decimal(15, 2)
+  valorAtual      Decimal   @default(0) @map("valor_atual") @db.Decimal(15, 2)
+  dataAlvo        DateTime? @map("data_alvo") @db.Date
+  dataCriacao     DateTime  @default(now()) @map("data_criacao")
+  dataAtualizacao DateTime  @default(now()) @map("data_atualizacao")
+  usuario         Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("metas_financeiras")
+  @@schema("monetrix")
+}
+
+model GrupoCompartilhado {
+  id                   Int                     @id @default(autoincrement())
+  nome                 String                  @db.VarChar(100)
+  tipo                 String                  @db.VarChar(50)
+  dataCriacao          DateTime                @default(now()) @map("data_criacao")
+  membrosGrupo         MembroGrupo[]
+  despesasCompartilhadas DespesaCompartilhada[]
+
+  @@map("grupos_compartilhados")
+  @@schema("monetrix")
+}
+
+model MembroGrupo {
+  id                   Int                     @id @default(autoincrement())
+  grupoId              Int                     @map("grupo_id")
+  usuarioId            Int                     @map("usuario_id")
+  nome                 String                  @db.VarChar(100)
+  iniciais             String?                 @db.VarChar(10)
+  avatarUrl            String?                 @map("avatar_url")
+  dataCriacao          DateTime                @default(now()) @map("data_criacao")
+  grupo                GrupoCompartilhado      @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  usuario              Usuario                 @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  despesasPagas        DespesaCompartilhada[]
+  divisoesDespesas     DivisaoDespesa[]
+
+  @@unique([grupoId, usuarioId])
+  @@map("membros_grupo")
+  @@schema("monetrix")
+}
+
+model DespesaCompartilhada {
+  id              Int              @id @default(autoincrement())
+  grupoId         Int              @map("grupo_id")
+  nome            String           @db.VarChar(100)
+  valor           Decimal          @db.Decimal(15, 2)
+  pagoPor         Int?             @map("pago_por")
+  data            DateTime         @db.Date
+  tipoDivisao     String           @map("tipo_divisao") @db.VarChar(20)
+  dataCriacao     DateTime         @default(now()) @map("data_criacao")
+  grupo           GrupoCompartilhado @relation(fields: [grupoId], references: [id], onDelete: Cascade)
+  pagador         MembroGrupo?     @relation(fields: [pagoPor], references: [id])
+  divisoes        DivisaoDespesa[]
+
+  @@map("despesas_compartilhadas")
+  @@schema("monetrix")
+}
+
+model DivisaoDespesa {
+  id             Int                  @id @default(autoincrement())
+  despesaId      Int                  @map("despesa_id")
+  membroId       Int                  @map("membro_id")
+  valor          Decimal              @db.Decimal(15, 2)
+  pago           Boolean              @default(false)
+  dataPagamento  DateTime?            @map("data_pagamento") @db.Date
+  despesa        DespesaCompartilhada @relation(fields: [despesaId], references: [id], onDelete: Cascade)
+  membro         MembroGrupo          @relation(fields: [membroId], references: [id], onDelete: Cascade)
+
+  @@unique([despesaId, membroId])
+  @@map("divisao_despesas")
+  @@schema("monetrix")
+}
+
+model Relatorio {
+  id           Int       @id @default(autoincrement())
+  usuarioId    Int       @map("usuario_id")
+  nome         String    @db.VarChar(100)
+  tipo         String    @db.VarChar(50)
+  periodo      String    @db.VarChar(50)
+  dataInicio   DateTime? @map("data_inicio") @db.Date
+  dataFim      DateTime? @map("data_fim") @db.Date
+  dataCriacao  DateTime  @default(now()) @map("data_criacao")
+  usuario      Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("relatorios")
+  @@schema("monetrix")
+}
