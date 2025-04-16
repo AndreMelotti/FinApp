@@ -1,0 +1,4 @@
+./node_modules
+./monetrix-insights/node_modules
+.env
+./monetrix-insights/.env
