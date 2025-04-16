@@ -1,4 +1,14 @@
 {
     "IDX.aI.enableInlineCompletion": true,
-    "IDX.aI.enableCodebaseIndexing": true
+    "IDX.aI.enableCodebaseIndexing": true,
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "name": "tcc",
+            "connectString": "postgresql://postgres.doscdxcsneegtjzxeufl:Pg@ndre2023@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true",
+            "connectionTimeout": 10000
+        }
+    ]
 }
