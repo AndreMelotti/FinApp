@@ -1,6 +1,4 @@
-import { IsString } from "class-validator";
+import { PartialType } from "@nestjs/swagger";
+import { CreateDivisoesDespesasDto } from "./create-divisoes-despesas.dto";
 
-export class UpdateDivisoesDespesasDto {
-  @IsString()
-  nome: string;
-}
+export class UpdateDivisoesDespesasDto extends PartialType(CreateDivisoesDespesasDto) {}

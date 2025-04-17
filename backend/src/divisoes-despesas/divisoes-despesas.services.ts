@@ -8,30 +8,30 @@ export class DivisoesDespesasService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: CreateDivisoesDespesasDto) {
-    return this.prisma.divisoesDespesas.create({
+    return this.prisma.divisao_despesas.create({
       data,
     });
   }
 
   async findAll() {
-    return this.prisma.divisoesDespesas.findMany();
+    return this.prisma.divisao_despesas.findMany();
   }
 
-  async findOne(id: string) {
-    return this.prisma.divisoesDespesas.findUnique({
+  async findOne(id: number) {
+    return this.prisma.divisao_despesas.findUnique({
       where: { id },
     });
   }
 
-  async update(id: string, data: UpdateDivisoesDespesasDto) {
-    return this.prisma.divisoesDespesas.update({
+  async update(id: number, data: UpdateDivisoesDespesasDto) {
+    return this.prisma.divisao_despesas.update({
       where: { id },
       data,
     });
   }
-  
-  async remove(id: string) {
-    return this.prisma.divisoesDespesas.delete({
+
+  async remove(id: number) {
+    return this.prisma.divisao_despesas.delete({
       where: { id },
     });
   }
