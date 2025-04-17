@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
-export class CreateRelatoriosDto {
+export class CreateDespesasCompartilhadasDto {
   @IsNotEmpty()
   @IsString()
   nome: string;
-}
+}   
