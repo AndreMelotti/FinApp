@@ -1,0 +1,225 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../generated/prisma"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model debts {
+  id               Int       @id @default(autoincrement())
+  wallet_id        Int
+  name             String    @db.VarChar(255)
+  total_amount     Decimal   @db.Decimal(15, 2)
+  remaining_amount Decimal   @db.Decimal(15, 2)
+  interest_rate    Decimal   @db.Decimal(5, 2)
+  installments     Int?
+  due_date         DateTime  @db.Date
+  monthly_payment  Decimal?  @db.Decimal(15, 2)
+  is_paid_off      Boolean?  @default(false)
+  created_by       Int
+  created_at       DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime? @default(now()) @db.Timestamptz(6)
+  users            users     @relation(fields: [created_by], references: [id], onUpdate: NoAction)
+  wallets          wallets   @relation(fields: [wallet_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model expense_goals {
+  id                     Int                    @id @default(autoincrement())
+  wallet_id              Int
+  category_id            Int
+  percentage             Decimal                @db.Decimal(5, 2)
+  color                  String?                @default("hsl(var(--chart-1))") @db.VarChar(50)
+  created_by             Int
+  created_at             DateTime?              @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime?              @default(now()) @db.Timestamptz(6)
+  transaction_categories transaction_categories @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users                  users                  @relation(fields: [created_by], references: [id], onUpdate: NoAction)
+  wallets                wallets                @relation(fields: [wallet_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([wallet_id, category_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model financial_goals {
+  id             Int       @id @default(autoincrement())
+  wallet_id      Int
+  name           String    @db.VarChar(255)
+  description    String?
+  target_amount  Decimal   @db.Decimal(15, 2)
+  current_amount Decimal?  @default(0.00) @db.Decimal(15, 2)
+  target_date    DateTime  @db.Date
+  color          String?   @default("from-blue-500 to-blue-600") @db.VarChar(50)
+  is_completed   Boolean?  @default(false)
+  created_by     Int
+  created_at     DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime? @default(now()) @db.Timestamptz(6)
+  users          users     @relation(fields: [created_by], references: [id], onUpdate: NoAction)
+  wallets        wallets   @relation(fields: [wallet_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model investment_categories {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique @db.VarChar(100)
+  description String?
+  created_at  DateTime?     @default(now()) @db.Timestamptz(6)
+  investments investments[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model investments {
+  id                    Int                   @id @default(autoincrement())
+  wallet_id             Int
+  category_id           Int
+  name                  String                @db.VarChar(255)
+  amount                Decimal               @db.Decimal(15, 2)
+  return_rate           Decimal?              @db.Decimal(5, 2)
+  purchase_date         DateTime              @db.Date
+  quantity              Decimal?              @db.Decimal(15, 4)
+  unit_price            Decimal?              @db.Decimal(15, 2)
+  current_value         Decimal?              @db.Decimal(15, 2)
+  created_by            Int
+  created_at            DateTime?             @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime?             @default(now()) @db.Timestamptz(6)
+  investment_categories investment_categories @relation(fields: [category_id], references: [id], onUpdate: NoAction)
+  users                 users                 @relation(fields: [created_by], references: [id], onUpdate: NoAction)
+  wallets               wallets               @relation(fields: [wallet_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model shared_expense_splits {
+  id                Int             @id @default(autoincrement())
+  shared_expense_id Int
+  user_id           Int
+  amount            Decimal         @db.Decimal(15, 2)
+  is_paid           Boolean?        @default(false)
+  paid_at           DateTime?       @db.Timestamptz(6)
+  shared_expenses   shared_expenses @relation(fields: [shared_expense_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users             users           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([shared_expense_id, user_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model shared_expenses {
+  id                    Int                     @id @default(autoincrement())
+  wallet_id             Int
+  name                  String                  @db.VarChar(255)
+  total_amount          Decimal                 @db.Decimal(15, 2)
+  paid_by               Int
+  expense_date          DateTime                @db.Date
+  split_type            String                  @default("equal") @db.VarChar(20)
+  description           String?
+  created_at            DateTime?               @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime?               @default(now()) @db.Timestamptz(6)
+  shared_expense_splits shared_expense_splits[]
+  users                 users                   @relation(fields: [paid_by], references: [id], onUpdate: NoAction)
+  wallets               wallets                 @relation(fields: [wallet_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model transaction_categories {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(100)
+  type          String          @db.VarChar(20)
+  wallet_id     Int?
+  is_default    Boolean?        @default(false)
+  created_at    DateTime?       @default(now()) @db.Timestamptz(6)
+  expense_goals expense_goals[]
+  wallets       wallets?        @relation(fields: [wallet_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  transactions  transactions[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model transactions {
+  id                     Int                    @id @default(autoincrement())
+  wallet_id              Int
+  category_id            Int
+  type                   String                 @db.VarChar(20)
+  amount                 Decimal                @db.Decimal(15, 2)
+  description            String?
+  transaction_date       DateTime               @db.Date
+  is_recurring           Boolean?               @default(false)
+  recurring_frequency    String?                @db.VarChar(20)
+  created_by             Int
+  created_at             DateTime?              @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime?              @default(now()) @db.Timestamptz(6)
+  transaction_categories transaction_categories @relation(fields: [category_id], references: [id], onUpdate: NoAction)
+  users                  users                  @relation(fields: [created_by], references: [id], onUpdate: NoAction)
+  wallets                wallets                @relation(fields: [wallet_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model user_settings {
+  id                    Int       @id @default(autoincrement())
+  user_id               Int       @unique
+  default_wallet_id     Int?
+  currency              String?   @default("BRL") @db.VarChar(10)
+  language              String?   @default("pt-BR") @db.VarChar(10)
+  timezone              String?   @default("America/Sao_Paulo") @db.VarChar(50)
+  notifications_enabled Boolean?  @default(true)
+  created_at            DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime? @default(now()) @db.Timestamptz(6)
+  wallets               wallets?  @relation(fields: [default_wallet_id], references: [id], onUpdate: NoAction)
+  users                 users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model users {
+  id                    Int                     @id @default(autoincrement())
+  name                  String                  @db.VarChar(255)
+  email                 String                  @unique @db.VarChar(255)
+  phone                 String?                 @db.VarChar(20)
+  password_hash         String                  @db.VarChar(255)
+  avatar_url            String?                 @db.VarChar(500)
+  created_at            DateTime?               @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime?               @default(now()) @db.Timestamptz(6)
+  debts                 debts[]
+  expense_goals         expense_goals[]
+  financial_goals       financial_goals[]
+  investments           investments[]
+  shared_expense_splits shared_expense_splits[]
+  shared_expenses       shared_expenses[]
+  transactions          transactions[]
+  user_settings         user_settings?
+  wallet_members        wallet_members[]
+  wallets               wallets[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model wallet_members {
+  id        Int       @id @default(autoincrement())
+  wallet_id Int
+  user_id   Int
+  role      String    @db.VarChar(20)
+  joined_at DateTime? @default(now()) @db.Timestamptz(6)
+  users     users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  wallets   wallets   @relation(fields: [wallet_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([wallet_id, user_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model wallets {
+  id                     Int                      @id @default(autoincrement())
+  name                   String                   @db.VarChar(255)
+  type                   String                   @db.VarChar(20)
+  color                  String                   @default("from-blue-500 to-blue-600") @db.VarChar(50)
+  balance                Decimal?                 @default(0.00) @db.Decimal(15, 2)
+  owner_id               Int
+  created_at             DateTime?                @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime?                @default(now()) @db.Timestamptz(6)
+  debts                  debts[]
+  expense_goals          expense_goals[]
+  financial_goals        financial_goals[]
+  investments            investments[]
+  shared_expenses        shared_expenses[]
+  transaction_categories transaction_categories[]
+  transactions           transactions[]
+  user_settings          user_settings[]
+  wallet_members         wallet_members[]
+  users                  users                    @relation(fields: [owner_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
